@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html lang="zxx">
+
+
+
+
+
+<!DOCTYPE html>
+<head>
+    <base href="http://www.qinhuangdao2.com.cn:80/WxActive/">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<title>云端棒棒糖</title>
+	<link rel="stylesheet" href="static/view/bbTang/template/dela-template.css">
+    <script type="text/javascript" src="static/ace/js/jquery.js"></script>
+    <script type="text/javascript" src="static/ace/js/jquery.form.js"></script>
+    <body style="background-image: url(https://demo.popoim.cn/upload/files/202007/105f083556ae89.gif)">
+	<style type="text/css">
+	 a.one:link {color: #2d9ddd}
+	a.one:hover {color: #F00  ;;font-size: 120%}
+	</style>
+</head>
+<body>
+<div id="page-container">
+    <div class="all-dela-presets-container">
+        <div class="dela-presets-container-2">
+            <div class="dela-preset-container">
+                <form class="dela-preset-2-3" method="get">
+                    <div align="center"><img src="static/view/bbTang/template/images/logo.png" width="100px" height="100px" alt="logo" "></div>
+                    <p class="dela-form__title">
+                        云端棒棒糖
+                    </p>
+                    <p>
+                        <center>独家全新协议 稳定不掉线</center>
+                    </p>
+                    </br>
+	  <div id="loginForm" style="display:flex;align-items: center;flex-flow:column;">
+          <input type="hidden" id="channelId" name="channelId" value="6">
+                    <input type="text"  name="activeCode" id="activeCode" placeholder="请输入激活码" >
+
+                    <input type="queryBtn" name="queryBtn"  onclick="login(this);" value="·登录·">
+	  </div>
+	  
+	        <div id="showForm">
+                <div class="description" id="qrCodeImgDiv" style="display:flex;flex-flow:column;align-items: center;margin-top: 35px;">
+                    <img id="qrCodeImg" src=" " style="width:60%;height:60%;"/>
+                    <div>
+                        <span id="detailsSpan"></span>
+                    </div>
+                </div>
+            </div>
+                    <span class="dela-form__note"><a class="one" align="left" href="http://m.youku.com/v_show/id_XNDczMjMxODk2OA==.html?pgcpgcid=UNzk4NjI4MTE4NA%3D%3D&sharekey=81a23b5af27660ed5030f31696034e448" target="_blank">使用教程</a> 
+                        &emsp;&emsp;&emsp;&emsp;<a class="one" align="right" href="bbtang/query.html" >查询卡密</a></span>
+                        
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $("#showForm").hide();
+
+    function showLogin() {
+        $("#loginForm").show();
+        $("#showForm").hide();
+        $("#qrCodeImg").src="";
+        $("#detailsSpan").text("");
+    }
+
+    function test(t){
+        var i= 30;
+        t.disabled=true;
+        var timer=setInterval(function(){
+            t.value="再次点击:"+i;
+            i--;
+            if(i<1){
+                t.disabled=false;
+                i=1;
+                t.value="登陆";
+                clearInterval(timer)
+            }
+        },1000)
+    }
+
+    function login(btn){
+        test(btn)
+        var activeCode = $("#activeCode").val()
+        var channelId = $("#channelId").val()
+        if($("#activeCode").val().length != 10){
+            alert("请输入有效的激活码");
+            $("#activeCode").focus();
+            return;
+        }else {
+            $.ajax({
+                type: "POST",
+                url: 'http://www.qinhuangdao2.com.cn:80/WxActive/appiew/getQrCodeByActiveCode',
+                data: {activeCode:activeCode,channelId:channelId},
+                dataType:'json',
+                cache: false,
+                success: function(data){
+                    if(data.state == 1){
+                        $("#loginForm").hide();
+                        $("#showForm").show();
+                        document.getElementById('qrCodeImg').src=data.data;
+                        if(data.wxId != null && data.wxId != ""){
+                            $("#detailsSpan").text("WxId:"+data.wxId);
+                        }
+                    }else {
+                        alert(data.message)
+                    }
+                }
+            });
+        }
+    }
+    function query(btn){
+        var activeCode = $("#activeCode").val()
+        var channelId = $("#channelId").val()
+        if($("#activeCode").val().length != 10){
+            alert("请输入有效的激活码");
+            $("#activeCode").focus();
+            return;
+        }else {
+            var activeCode = $.trim($("#activeCode").val());
+            var channelId = ($("#channelId").val());
+            $.ajax({
+                type: "POST",
+                url: 'http://www.qinhuangdao2.com.cn:80/WxActive/appiew/getQrCodeLastTime',
+                data: {activeCode:activeCode,channelId:channelId},
+                dataType:'json',
+                cache: false,
+                success: function(data){
+                    if(data.state == 1){
+                        $("#loginForm").hide();
+                        $("#showForm").show();
+                        if(data.wxId != null && data.wxId != ""){
+                            $("#detailsSpan").text("WxId:"+data.wxId+",到期时间："+new Date(data.lastTime).toLocaleString());
+                        }
+                    }else {
+                        alert(data.message)
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+<body>
+	<!-- 仅自动播放音乐 -->
+	<audio src="https://demo.popoim.cn/upload/files/202007/065f027d27061a.mp3" autoplay></audio>
+
+</body>
+</html>
